@@ -1,21 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bookmark } from "lucide-react";
-import { useEffect, useState } from "react";
-import { AttendeeRating } from "./AttendeeRating";
-import { SpeakerReview } from "./SpeakerReview";
 import {
   getIsBookmarked,
   getSession,
   getSpeaker,
-  Session,
-  Speaker,
   toggleBookmark,
 } from "@/data";
+import { useAsync } from "@/hooks/use-async";
+import { Bookmark } from "lucide-react";
+import { AttendeeRating } from "./AttendeeRating";
+import { SpeakerReview } from "./SpeakerReview";
 
 type SessionDetailsProps = {
   sessionId: string;
-  role?: "attendee" | "speaker";
+  role?: "attendee" | "speaker" | "";
   goBack: () => void;
 };
 
@@ -24,23 +22,13 @@ export function SessionDetails({
   goBack,
   role,
 }: SessionDetailsProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [session, setSession] = useState<Session>();
-  const [speaker, setSpeaker] = useState<Speaker>();
-
-  function fetchIsBookmarked() {
-    getIsBookmarked(sessionId).then(setIsBookmarked);
-  }
-
-  useEffect(() => {
-    getSession(sessionId).then((s) => setSession(s));
-    fetchIsBookmarked();
-  }, [sessionId]);
-
-  useEffect(() => {
-    session?.speakerId &&
-      getSpeaker(session?.speakerId).then((s) => setSpeaker(s));
-  }, [session?.speakerId]);
+  const { value: session } = useAsync(() => getSession(sessionId));
+  const { value: speaker } = useAsync(() =>
+    session?.speakerId ? getSpeaker(session?.speakerId) : Promise.resolve(null)
+  );
+  const { value: isBookmarked, refetch: refetchBookmarked } = useAsync(() =>
+    getIsBookmarked(sessionId)
+  );
 
   if (!session) return <div>Loading...</div>;
 
@@ -54,7 +42,7 @@ export function SessionDetails({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => toggleBookmark(session.id).then(fetchIsBookmarked)}
+          onClick={() => toggleBookmark(session.id).then(refetchBookmarked)}
         >
           <Bookmark className={isBookmarked ? "fill-current" : ""} />
         </Button>

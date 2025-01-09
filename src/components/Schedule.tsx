@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getSchedule, getSpeakers, Session, Speaker } from "@/data";
-import { useEffect, useState } from "react";
+import { getSchedule, getSpeakers, Session } from "@/data";
+import { useAsync } from "@/hooks/use-async";
+import { useState } from "react";
 
 export type ScheduleProps = {
   onSelectSession: (session: Session) => void;
@@ -31,20 +32,8 @@ function DaySchedule({
   day: string;
   onSelectSession: (session: Session) => void;
 }) {
-  const [sessions, setSessions] = useState<Session[]>();
-  const [speakers, setSpeakers] = useState<Speaker[]>();
-
-  useEffect(() => {
-    getSchedule(day).then((data) => {
-      setSessions(data);
-    });
-  }, [day]);
-
-  useEffect(() => {
-    getSpeakers().then((data) => {
-      setSpeakers(data);
-    });
-  }, []);
+  const { value: sessions } = useAsync(() => getSchedule(day));
+  const { value: speakers } = useAsync(() => getSpeakers());
 
   return (
     <div className="mt-4">

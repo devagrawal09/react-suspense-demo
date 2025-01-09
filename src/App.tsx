@@ -2,28 +2,25 @@ import { JSX, useEffect, useState } from "react";
 import { SessionDetails } from "./components/SessionDetails";
 import { Button } from "./components/ui/button";
 import { type ScheduleProps } from "./components/Schedule";
+import { Toaster } from "./components/ui/toaster";
+import { useAsync } from "./hooks/use-async";
 
 async function asyncSchedule() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return import("./components/Schedule");
+  return await import("./components/Schedule");
 }
 
 let loadedSchedule: (props: ScheduleProps) => JSX.Element;
 
 function Schedule(props: ScheduleProps) {
-  const [_Schedule, setSchedule] = useState<
-    (props: ScheduleProps) => JSX.Element
-  >(() => loadedSchedule);
+  const { value: _Schedule } = useAsync(() => {
+    if (loadedSchedule) return Promise.resolve(loadedSchedule);
 
-  useEffect(() => {
-    if (!_Schedule) {
-      console.log(`loading schedule`);
-
-      asyncSchedule().then((schedule) =>
-        setSchedule(() => (loadedSchedule = schedule.Schedule))
-      );
-    }
-  }, []);
+    return asyncSchedule().then((module) => {
+      loadedSchedule = module.Schedule;
+      return loadedSchedule;
+    });
+  });
 
   return _Schedule && <_Schedule {...props} />;
 }
@@ -33,11 +30,17 @@ type Route =
   | { route: "home" }
   | { route: "login" };
 
-type Role = "attendee" | "speaker";
+type Role = "attendee" | "speaker" | "";
 
 function App() {
   const [currentRoute, setRoute] = useState<Route>({ route: "home" });
-  const [role, setRole] = useState<Role>();
+  const [role, setRole] = useState<Role>(
+    () => localStorage.getItem("role") as Role
+  );
+
+  useEffect(() => {
+    localStorage.setItem("role", role);
+  }, [role]);
 
   return (
     <>
@@ -54,7 +57,7 @@ function App() {
               variant="link"
               className="text-white"
               onClick={() => {
-                setRole(undefined);
+                setRole("");
                 setRoute({ route: "home" });
               }}
             >
@@ -105,6 +108,7 @@ function App() {
           </div>
         ) : null}
       </main>
+      <Toaster />
     </>
   );
 }

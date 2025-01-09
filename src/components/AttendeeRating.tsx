@@ -1,19 +1,19 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThumbsDown, Minus, ThumbsUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { getAttendeeFeedback, setAttendeeFeedback } from "@/data";
+import { useAsync } from "@/hooks/use-async";
 
 type RatingOption = "negative" | "neutral" | "positive";
 
 export function AttendeeRating({ sessionId }: { sessionId: string }) {
-  const [selectedRating, setSelectedRating] = useState<RatingOption | null>(
-    null
+  const { value: selectedRating, refetch } = useAsync(() =>
+    getAttendeeFeedback(sessionId)
   );
 
-  const handleRating = (rating: RatingOption) => {
-    setSelectedRating(rating);
-    // Here you would typically send this rating to your backend
-    console.log(`Session ${sessionId} rated as ${rating}`);
+  const handleRating = async (rating: RatingOption) => {
+    await setAttendeeFeedback(sessionId, rating);
+    refetch();
     toast({
       title: "Thank you for your feedback!",
       description: "Your rating has been recorded.",

@@ -149,3 +149,41 @@ export async function toggleBookmark(sessionId: string) {
   localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   return !index;
 }
+
+export type AttendeeFeedback = "negative" | "neutral" | "positive";
+export async function getAttendeeFeedback(sessionId: string) {
+  await timeout();
+  const feedback: Record<string, AttendeeFeedback> = JSON.parse(
+    localStorage.getItem("attendee-feedback") || "{}"
+  );
+  return feedback[sessionId];
+}
+
+export async function setAttendeeFeedback(
+  sessionId: string,
+  feedback: AttendeeFeedback
+) {
+  await timeout();
+  const currentFeedback: Record<string, AttendeeFeedback> = JSON.parse(
+    localStorage.getItem("attendee-feedback") || "{}"
+  );
+  currentFeedback[sessionId] = feedback;
+  localStorage.setItem("attendee-feedback", JSON.stringify(currentFeedback));
+}
+
+export async function getSpeakerFeedback(sessionId: string) {
+  await timeout();
+  const feedback: Record<string, string> = JSON.parse(
+    localStorage.getItem("speaker-feedback") || "{}"
+  );
+  return feedback[sessionId] || "";
+}
+
+export async function setSpeakerFeedback(sessionId: string, feedback: string) {
+  await timeout();
+  const currentFeedback: Record<string, string> = JSON.parse(
+    localStorage.getItem("speaker-feedback") || "{}"
+  );
+  currentFeedback[sessionId] = feedback;
+  localStorage.setItem("speaker-feedback", JSON.stringify(currentFeedback));
+}
