@@ -1,14 +1,15 @@
+import { Route } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getSchedule, getSpeakers, Session } from "@/data";
+import { getSchedule, getSpeakers } from "@/data";
 import { useAsync } from "@/hooks/use-async";
 import { useState } from "react";
 
 export type ScheduleProps = {
-  onSelectSession: (session: Session) => void;
+  setRoute: (route: Route) => void;
 };
 
-export function Schedule({ onSelectSession }: ScheduleProps) {
+export function Schedule({ setRoute }: ScheduleProps) {
   const [activeTab, setActiveTab] = useState("day1");
 
   return (
@@ -20,17 +21,17 @@ export function Schedule({ onSelectSession }: ScheduleProps) {
           <TabsTrigger value="day3">Day 3</TabsTrigger>
         </TabsList>
       </Tabs>
-      <DaySchedule day={activeTab} onSelectSession={onSelectSession} />
+      <DaySchedule day={activeTab} setRoute={setRoute} />
     </>
   );
 }
 
 function DaySchedule({
   day,
-  onSelectSession,
+  setRoute,
 }: {
   day: string;
-  onSelectSession: (session: Session) => void;
+  setRoute: (route: Route) => void;
 }) {
   const { value: sessions } = useAsync(() => getSchedule(day));
   const { value: speakers } = useAsync(() => getSpeakers());
@@ -43,7 +44,9 @@ function DaySchedule({
             key={session.id}
             variant="ghost"
             className="w-full justify-start text-left mb-2 p-4 py-8 bg-gray-50 hover:bg-gray-100"
-            onClick={() => onSelectSession(session)}
+            onClick={() =>
+              setRoute({ route: "session", sessionId: session.id })
+            }
           >
             <div>
               <p className="font-bold">{session.title}</p>

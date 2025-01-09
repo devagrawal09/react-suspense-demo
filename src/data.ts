@@ -187,3 +187,11 @@ export async function setSpeakerFeedback(sessionId: string, feedback: string) {
   currentFeedback[sessionId] = feedback;
   localStorage.setItem("speaker-feedback", JSON.stringify(currentFeedback));
 }
+
+export type Role = "attendee" | "speaker" | "";
+export function getRole() {
+  return localStorage.getItem("role") as Role;
+}
+export function setRole(role: Role) {
+  localStorage.setItem("role", role);
+}

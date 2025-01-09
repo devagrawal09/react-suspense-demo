@@ -11,7 +11,7 @@ import { Bookmark } from "lucide-react";
 import { AttendeeRating } from "./AttendeeRating";
 import { SpeakerReview } from "./SpeakerReview";
 
-type SessionDetailsProps = {
+export type SessionDetailsProps = {
   sessionId: string;
   role?: "attendee" | "speaker" | "";
   goBack: () => void;
