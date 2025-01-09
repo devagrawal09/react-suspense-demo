@@ -23,14 +23,10 @@ export function SessionDetails({
   role,
 }: SessionDetailsProps) {
   const { value: session } = useAsync(() => getSession(sessionId));
-  const { value: speaker } = useAsync(() =>
-    session?.speakerId ? getSpeaker(session?.speakerId) : Promise.resolve(null)
-  );
+  const { value: speaker } = useAsync(() => getSpeaker(session.speakerId));
   const { value: isBookmarked, refetch: refetchBookmarked } = useAsync(() =>
     getIsBookmarked(sessionId)
   );
-
-  if (!session) return <div>Loading...</div>;
 
   return (
     <>
@@ -50,14 +46,10 @@ export function SessionDetails({
       <p className="text-sm text-gray-600 mb-4">{session.time}</p>
       <p>{session.description || "No description available."}</p>
 
-      {speaker ? (
-        <div className="mt-4">
-          <p className="font-bold">{speaker.name}</p>
-          <p className="text-sm text-gray-600">{speaker.bio}</p>
-        </div>
-      ) : (
-        <p className="mt-4 text-sm text-gray-600">Loading speaker details.</p>
-      )}
+      <div className="mt-4">
+        <p className="font-bold">{speaker.name}</p>
+        <p className="text-sm text-gray-600">{speaker.bio}</p>
+      </div>
 
       <Card className="mt-4 pt-4">
         <CardContent className="space-y-6">

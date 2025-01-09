@@ -33,33 +33,27 @@ function DaySchedule({
   day: string;
   setRoute: (route: Route) => void;
 }) {
-  const { value: sessions } = useAsync(() => getSchedule(day));
+  const { value: sessions } = useAsync(() => getSchedule(day), [day]);
   const { value: speakers } = useAsync(() => getSpeakers());
 
   return (
     <div className="mt-4">
-      {sessions ? (
-        sessions.map((session) => (
-          <Button
-            key={session.id}
-            variant="ghost"
-            className="w-full justify-start text-left mb-2 p-4 py-8 bg-gray-50 hover:bg-gray-100"
-            onClick={() =>
-              setRoute({ route: "session", sessionId: session.id })
-            }
-          >
-            <div>
-              <p className="font-bold">{session.title}</p>
-              <p className="text-sm text-gray-600">
-                {session.time} -{" "}
-                {speakers?.find((s) => s.id === session.speakerId)?.name}
-              </p>
-            </div>
-          </Button>
-        ))
-      ) : (
-        <div>Loading...</div>
-      )}
+      {sessions.map((session) => (
+        <Button
+          key={session.id}
+          variant="ghost"
+          className="w-full justify-start text-left mb-2 p-4 py-8 bg-gray-50 hover:bg-gray-100"
+          onClick={() => setRoute({ route: "session", sessionId: session.id })}
+        >
+          <div>
+            <p className="font-bold">{session.title}</p>
+            <p className="text-sm text-gray-600">
+              {session.time} -{" "}
+              {speakers.find((s) => s.id === session.speakerId)?.name}
+            </p>
+          </div>
+        </Button>
+      ))}
     </div>
   );
 }

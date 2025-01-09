@@ -1,8 +1,10 @@
+import { cache } from "./hooks/use-async";
+
 const withDeviation = (seed: number) => {
   const deviation = Math.random() * 0.8 + 0.6;
   return Math.floor(seed * deviation);
 };
-const timeout = (ms = 500) =>
+const timeout = (ms = 100) =>
   new Promise((resolve) => setTimeout(resolve, withDeviation(ms)));
 
 export type Session = {
@@ -103,39 +105,43 @@ const speakers: Speaker[] = [
   },
 ];
 
-export async function getSchedule(day: string) {
+export const getSchedule = cache(async (day: string) => {
   await timeout();
   return schedule[day];
-}
+});
 
-export async function getSession(sessionId: string) {
+export const getSession = cache(async (sessionId: string) => {
   await timeout();
-  return Object.values(schedule)
+  const session = Object.values(schedule)
     .flat()
     .find((s) => s.id === sessionId);
-}
+  if (!session) throw new Error("Session not found");
+  return session;
+});
 
-export async function getSpeaker(speakerId: string) {
+export const getSpeaker = cache(async (speakerId: string) => {
   await timeout();
-  return speakers.find((s) => s.id === speakerId);
-}
+  const speaker = speakers.find((s) => s.id === speakerId);
+  if (!speaker) throw new Error("Speaker not found");
+  return speaker;
+});
 
-export async function getSpeakers() {
+export const getSpeakers = cache(async () => {
   await timeout();
   return speakers;
-}
+});
 
-export async function getIsBookmarked(sessionId: string) {
-  console.log(`get bookmark`, sessionId);
+export const getIsBookmarked = cache(async (sessionId: string) => {
   await timeout();
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
   );
-  return bookmarks.includes(sessionId);
-}
+  const is = bookmarks.includes(sessionId);
+  console.log(sessionId, is);
+  return is;
+});
 
 export async function toggleBookmark(sessionId: string) {
-  console.log(`toggle bookmark`, sessionId);
   await timeout();
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
@@ -151,13 +157,14 @@ export async function toggleBookmark(sessionId: string) {
 }
 
 export type AttendeeFeedback = "negative" | "neutral" | "positive";
-export async function getAttendeeFeedback(sessionId: string) {
+
+export const getAttendeeFeedback = cache(async (sessionId: string) => {
   await timeout();
   const feedback: Record<string, AttendeeFeedback> = JSON.parse(
     localStorage.getItem("attendee-feedback") || "{}"
   );
   return feedback[sessionId];
-}
+});
 
 export async function setAttendeeFeedback(
   sessionId: string,
@@ -171,13 +178,13 @@ export async function setAttendeeFeedback(
   localStorage.setItem("attendee-feedback", JSON.stringify(currentFeedback));
 }
 
-export async function getSpeakerFeedback(sessionId: string) {
+export const getSpeakerFeedback = cache(async (sessionId: string) => {
   await timeout();
   const feedback: Record<string, string> = JSON.parse(
     localStorage.getItem("speaker-feedback") || "{}"
   );
   return feedback[sessionId] || "";
-}
+});
 
 export async function setSpeakerFeedback(sessionId: string, feedback: string) {
   await timeout();

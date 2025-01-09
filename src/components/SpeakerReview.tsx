@@ -28,10 +28,9 @@ export function SpeakerReview({ sessionId }: { sessionId: string }) {
         placeholder="Please provide your detailed review of this session..."
         rows={5}
         name="review"
+        defaultValue={review}
       />
-      <Button type="submit" disabled={!review?.trim()}>
-        Submit Review
-      </Button>
+      <Button type="submit">Submit Review</Button>
     </form>
   );
 }

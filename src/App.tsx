@@ -1,11 +1,8 @@
-import { JSX, useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { Header } from "./components/Header";
 import { Login } from "./components/Login";
-import { type ScheduleProps } from "./components/Schedule";
-import { type SessionDetailsProps } from "./components/SessionDetails";
 import { Toaster } from "./components/ui/toaster";
 import { getRole } from "./data";
-import { useAsync } from "./hooks/use-async";
 
 export type Route =
   | { route: "session"; sessionId: string }
@@ -41,42 +38,16 @@ function App() {
   );
 }
 
-async function asyncSchedule() {
+const Schedule = lazy(async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return await import("./components/Schedule");
-}
-let loadedSchedule: (props: ScheduleProps) => JSX.Element;
+  const m = await import("./components/Schedule");
+  return { default: m.Schedule };
+});
 
-function Schedule(props: ScheduleProps) {
-  const { value: _Schedule } = useAsync(() => {
-    if (loadedSchedule) return Promise.resolve(loadedSchedule);
-
-    return asyncSchedule().then((module) => {
-      loadedSchedule = module.Schedule;
-      return loadedSchedule;
-    });
-  });
-
-  return _Schedule && <_Schedule {...props} />;
-}
-
-async function asyncSessionDetails() {
+const SessionDetails = lazy(async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return await import("./components/SessionDetails");
-}
-let loadedSessionDetails: (props: SessionDetailsProps) => JSX.Element;
-
-function SessionDetails(props: SessionDetailsProps) {
-  const { value: _SessionDetails } = useAsync(() => {
-    if (loadedSessionDetails) return Promise.resolve(loadedSessionDetails);
-
-    return asyncSessionDetails().then((module) => {
-      loadedSessionDetails = module.SessionDetails;
-      return loadedSessionDetails;
-    });
-  });
-
-  return _SessionDetails && <_SessionDetails {...props} />;
-}
+  const m = await import("./components/SessionDetails");
+  return { default: m.SessionDetails };
+});
 
 export default App;
