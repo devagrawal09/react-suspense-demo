@@ -2,25 +2,27 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { getSpeakerFeedback, setSpeakerFeedback } from "@/data";
-import { useAsync } from "@/hooks/use-async";
+import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 
 export type SpeakerReviewProps = { sessionId: string };
 export function SpeakerReview({ sessionId }: SpeakerReviewProps) {
-  const { value: review, refetch } = useAsync(() =>
+  const { value: review, refetch } = useAsyncData(() =>
     getSpeakerFeedback(sessionId)
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const value = formData.get("review") as string;
-    await setSpeakerFeedback(sessionId, value);
-    refetch();
-    toast({
-      title: "Review submitted",
-      description: "Thank you for your detailed feedback!",
-    });
-  };
+  const { execute: handleSubmit, status: submitStatus } = useAsyncAction(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = new FormData(e.currentTarget);
+      const value = formData.get("review") as string;
+      await setSpeakerFeedback(sessionId, value);
+      refetch();
+      toast({
+        title: "Review submitted",
+        description: "Thank you for your detailed feedback!",
+      });
+    }
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -33,8 +35,11 @@ export function SpeakerReview({ sessionId }: SpeakerReviewProps) {
         rows={5}
         name="review"
         defaultValue={review || ""}
+        disabled={submitStatus === "pending"}
       />
-      <Button type="submit">Submit Review</Button>
+      <Button type="submit" disabled={submitStatus === "pending"}>
+        Submit Review
+      </Button>
     </form>
   );
 }

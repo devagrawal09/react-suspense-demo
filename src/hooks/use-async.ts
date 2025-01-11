@@ -37,3 +37,25 @@ export function cache<T, A>(
 
   return cachedFunction;
 }
+
+export function useAsyncAction<P>(asyncFunction: (params: P) => Promise<void>) {
+  const [status, setStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >("idle");
+  const [error, setError] = useState<Error | null>(null);
+
+  function execute(params: P) {
+    setStatus("pending");
+    setError(null);
+    return asyncFunction(params)
+      .then(() => {
+        setStatus("success");
+      })
+      .catch((error) => {
+        setError(error);
+        setStatus("error");
+      });
+  }
+
+  return { execute, status, error };
+}

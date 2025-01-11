@@ -6,7 +6,7 @@ import {
   getSpeaker,
   toggleBookmark,
 } from "@/data";
-import { useAsync } from "@/hooks/use-async";
+import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 import { Bookmark } from "lucide-react";
 import { lazy } from "react";
 
@@ -21,11 +21,16 @@ export function SessionDetails({
   goBack,
   role,
 }: SessionDetailsProps) {
-  const { value: session } = useAsync(() => getSession(sessionId));
-  const { value: speaker } = useAsync(() => getSpeaker(session.speakerId));
-  const { value: isBookmarked, refetch: refetchBookmarked } = useAsync(() =>
+  const { value: session } = useAsyncData(() => getSession(sessionId));
+  const { value: speaker } = useAsyncData(async () =>
+    getSpeaker(session.speakerId)
+  );
+  const { value: isBookmarked, refetch } = useAsyncData(() =>
     getIsBookmarked(sessionId)
   );
+
+  const { status: toggleBookmarkStatus, execute: toggleBookmarkAction } =
+    useAsyncAction(() => toggleBookmark(sessionId).then(refetch));
 
   return (
     <>
@@ -37,7 +42,8 @@ export function SessionDetails({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => toggleBookmark(session.id).then(refetchBookmarked)}
+          onClick={toggleBookmarkAction}
+          disabled={toggleBookmarkStatus === "pending"}
         >
           <Bookmark className={isBookmarked ? "fill-current" : ""} />
         </Button>

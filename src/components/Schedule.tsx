@@ -2,7 +2,7 @@ import { Route } from "@/App";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSchedule, getSpeakers } from "@/data";
-import { useAsync } from "@/hooks/use-async";
+import { useAsyncData } from "@/hooks/use-async";
 import { useState } from "react";
 
 export type ScheduleProps = {
@@ -11,11 +11,11 @@ export type ScheduleProps = {
 
 export function Schedule({ setRoute }: ScheduleProps) {
   const [activeTab, setActiveTab] = useState("day1");
-  const { value: sessions } = useAsync(
+  const { value: sessions } = useAsyncData(
     () => getSchedule(activeTab),
     [activeTab]
   );
-  const { value: speakers } = useAsync(() => getSpeakers());
+  const { value: speakers } = useAsyncData(() => getSpeakers());
 
   return (
     <>
