@@ -21,10 +21,10 @@ export function cache<T, A>(
   const cachedFunction = (props: A) => {
     const localKey = `${globalKey}:${JSON.stringify(props)}`;
     if (globalCache.has(localKey)) {
-      console.log("Cache hit", localKey);
+      // console.log("Cache hit", localKey);
       return globalCache.get(localKey);
     }
-    console.log("Cache miss", localKey);
+    // console.log("Cache miss", localKey);
     const promise = asyncFunction(props);
     globalCache.set(localKey, promise);
     promise.then(() => {
