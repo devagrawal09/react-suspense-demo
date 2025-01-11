@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useAsync<T>(asyncFunction: () => Promise<T>) {
+export function useAsync<T>(asyncFunction: () => Promise<T>, deps: any[] = []) {
   const [status, setStatus] = useState("idle");
   const [value, setValue] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -11,7 +11,7 @@ export function useAsync<T>(asyncFunction: () => Promise<T>) {
     setError(null);
     return asyncFunction()
       .then((response) => {
-        setValue(response);
+        setValue(() => response);
         setStatus("success");
       })
       .catch((error) => {
@@ -22,7 +22,7 @@ export function useAsync<T>(asyncFunction: () => Promise<T>) {
 
   useEffect(() => {
     execute();
-  }, []);
+  }, [...deps]);
 
   return { refetch: execute, status, value, error };
 }

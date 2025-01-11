@@ -11,6 +11,11 @@ export type ScheduleProps = {
 
 export function Schedule({ setRoute }: ScheduleProps) {
   const [activeTab, setActiveTab] = useState("day1");
+  const { value: sessions } = useAsync(
+    () => getSchedule(activeTab),
+    [activeTab]
+  );
+  const { value: speakers } = useAsync(() => getSpeakers());
 
   return (
     <>
@@ -21,45 +26,30 @@ export function Schedule({ setRoute }: ScheduleProps) {
           <TabsTrigger value="day3">Day 3</TabsTrigger>
         </TabsList>
       </Tabs>
-      <DaySchedule day={activeTab} setRoute={setRoute} />
+      <div className="mt-4">
+        {sessions ? (
+          sessions.map((session) => (
+            <Button
+              key={session.id}
+              variant="ghost"
+              className="w-full justify-start text-left mb-2 p-4 py-8 bg-gray-50 hover:bg-gray-100"
+              onClick={() =>
+                setRoute({ route: "session", sessionId: session.id })
+              }
+            >
+              <div>
+                <p className="font-bold">{session.title}</p>
+                <p className="text-sm text-gray-600">
+                  {session.time} -{" "}
+                  {speakers?.find((s) => s.id === session.speakerId)?.name}
+                </p>
+              </div>
+            </Button>
+          ))
+        ) : (
+          <div>Loading...</div>
+        )}
+      </div>
     </>
-  );
-}
-
-function DaySchedule({
-  day,
-  setRoute,
-}: {
-  day: string;
-  setRoute: (route: Route) => void;
-}) {
-  const { value: sessions } = useAsync(() => getSchedule(day));
-  const { value: speakers } = useAsync(() => getSpeakers());
-
-  return (
-    <div className="mt-4">
-      {sessions ? (
-        sessions.map((session) => (
-          <Button
-            key={session.id}
-            variant="ghost"
-            className="w-full justify-start text-left mb-2 p-4 py-8 bg-gray-50 hover:bg-gray-100"
-            onClick={() =>
-              setRoute({ route: "session", sessionId: session.id })
-            }
-          >
-            <div>
-              <p className="font-bold">{session.title}</p>
-              <p className="text-sm text-gray-600">
-                {session.time} -{" "}
-                {speakers?.find((s) => s.id === session.speakerId)?.name}
-              </p>
-            </div>
-          </Button>
-        ))
-      ) : (
-        <div>Loading...</div>
-      )}
-    </div>
   );
 }
