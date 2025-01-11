@@ -115,14 +115,14 @@ export const getSession = cache(async (sessionId: string) => {
   const session = Object.values(schedule)
     .flat()
     .find((s) => s.id === sessionId);
-  if (!session) throw new Error("Session not found");
+  if (!session) throw new Error(`Session not found: ${sessionId}`);
   return session;
 });
 
 export const getSpeaker = cache(async (speakerId: string) => {
   await timeout();
   const speaker = speakers.find((s) => s.id === speakerId);
-  if (!speaker) throw new Error("Speaker not found");
+  if (!speaker) throw new Error(`Speaker not found: ${speakerId}`);
   return speaker;
 });
 
@@ -136,12 +136,10 @@ export const getIsBookmarked = cache(async (sessionId: string) => {
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
   );
-  const is = bookmarks.includes(sessionId);
-  console.log(sessionId, is);
-  return is;
+  return bookmarks.includes(sessionId);
 });
 
-export async function toggleBookmark(sessionId: string) {
+export const toggleBookmark = async (sessionId: string) => {
   await timeout();
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
@@ -154,7 +152,7 @@ export async function toggleBookmark(sessionId: string) {
   }
   localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
   return !index;
-}
+};
 
 export type AttendeeFeedback = "negative" | "neutral" | "positive";
 
