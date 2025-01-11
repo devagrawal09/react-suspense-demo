@@ -1,6 +1,9 @@
 import { useState, use, useMemo } from "react";
 
-export function useAsync<T>(asyncFunction: () => Promise<T>, deps: any[] = []) {
+export function useAsyncData<T>(
+  asyncFunction: () => Promise<T>,
+  deps: any[] = []
+) {
   const [fetching, setFetching] = useState(false);
   const value = use(useMemo(asyncFunction, [...deps, fetching]));
   const refetch = () => setFetching((f) => !f);
