@@ -125,7 +125,7 @@ export const getSpeaker = async (speakerId: string) => {
 };
 
 export const getSpeakers = async () => {
-  await timeout();
+  await timeout(800);
   return speakers;
 };
 

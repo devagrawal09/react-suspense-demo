@@ -41,13 +41,15 @@ export function Schedule({ setRoute }: ScheduleProps) {
                 <p className="font-bold">{session.title}</p>
                 <p className="text-sm text-gray-600">
                   {session.time} -{" "}
-                  {speakers?.find((s) => s.id === session.speakerId)?.name}
+                  {speakers
+                    ? speakers.find((s) => s.id === session.speakerId)?.name
+                    : "Loading speaker..."}
                 </p>
               </div>
             </Button>
           ))
         ) : (
-          <div>Loading...</div>
+          <div>Loading schedule data...</div>
         )}
       </div>
     </>

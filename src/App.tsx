@@ -41,42 +41,38 @@ function App() {
   );
 }
 
-async function asyncSchedule() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return await import("./components/Schedule");
-}
 let loadedSchedule: (props: ScheduleProps) => JSX.Element;
 
 function Schedule(props: ScheduleProps) {
-  const { value: _Schedule } = useAsync(() => {
-    if (loadedSchedule) return Promise.resolve(loadedSchedule);
+  const { value: _Schedule } = useAsync(async () => {
+    if (loadedSchedule) return loadedSchedule;
 
-    return asyncSchedule().then((module) => {
-      loadedSchedule = module.Schedule;
-      return loadedSchedule;
-    });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const module = await import("./components/Schedule");
+    loadedSchedule = module.Schedule;
+    return loadedSchedule;
   });
 
-  return _Schedule && <_Schedule {...props} />;
+  return _Schedule ? <_Schedule {...props} /> : "Loading schedule page...";
 }
 
-async function asyncSessionDetails() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return await import("./components/SessionDetails");
-}
 let loadedSessionDetails: (props: SessionDetailsProps) => JSX.Element;
 
 function SessionDetails(props: SessionDetailsProps) {
-  const { value: _SessionDetails } = useAsync(() => {
-    if (loadedSessionDetails) return Promise.resolve(loadedSessionDetails);
+  const { value: _SessionDetails } = useAsync(async () => {
+    if (loadedSessionDetails) return loadedSessionDetails;
 
-    return asyncSessionDetails().then((module) => {
-      loadedSessionDetails = module.SessionDetails;
-      return loadedSessionDetails;
-    });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const module = await import("./components/SessionDetails");
+    loadedSessionDetails = module.SessionDetails;
+    return loadedSessionDetails;
   });
 
-  return _SessionDetails && <_SessionDetails {...props} />;
+  return _SessionDetails ? (
+    <_SessionDetails {...props} />
+  ) : (
+    "Loading session page..."
+  );
 }
 
 export default App;

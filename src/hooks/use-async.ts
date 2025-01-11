@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 
 export function useAsync<T>(asyncFunction: () => Promise<T>, deps: any[] = []) {
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState<"pending" | "success" | "error">(
+    "pending"
+  );
   const [value, setValue] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
