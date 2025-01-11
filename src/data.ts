@@ -166,17 +166,17 @@ export const getAttendeeFeedback = cache(async (sessionId: string) => {
   return feedback[sessionId];
 });
 
-export async function setAttendeeFeedback(
+export const setAttendeeFeedback = async (
   sessionId: string,
   feedback: AttendeeFeedback
-) {
+) => {
   await timeout();
   const currentFeedback: Record<string, AttendeeFeedback> = JSON.parse(
     localStorage.getItem("attendee-feedback") || "{}"
   );
   currentFeedback[sessionId] = feedback;
   localStorage.setItem("attendee-feedback", JSON.stringify(currentFeedback));
-}
+};
 
 export const getSpeakerFeedback = cache(async (sessionId: string) => {
   await timeout();
@@ -186,14 +186,17 @@ export const getSpeakerFeedback = cache(async (sessionId: string) => {
   return feedback[sessionId] || "";
 });
 
-export async function setSpeakerFeedback(sessionId: string, feedback: string) {
+export const setSpeakerFeedback = async (
+  sessionId: string,
+  feedback: string
+) => {
   await timeout();
   const currentFeedback: Record<string, string> = JSON.parse(
     localStorage.getItem("speaker-feedback") || "{}"
   );
   currentFeedback[sessionId] = feedback;
   localStorage.setItem("speaker-feedback", JSON.stringify(currentFeedback));
-}
+};
 
 export type Role = "attendee" | "speaker" | "";
 export function getRole() {
