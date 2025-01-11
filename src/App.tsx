@@ -40,14 +40,14 @@ function App() {
 
 const Schedule = lazy(async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const m = await import("./components/Schedule");
-  return { default: m.Schedule };
+  const module = await import("./components/Schedule");
+  return { default: module.Schedule };
 });
 
 const SessionDetails = lazy(async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const m = await import("./components/SessionDetails");
-  return { default: m.SessionDetails };
+  const module = await import("./components/SessionDetails");
+  return { default: module.SessionDetails };
 });
 
 export default App;

@@ -8,9 +8,7 @@ import {
 } from "@/data";
 import { useAsync } from "@/hooks/use-async";
 import { Bookmark } from "lucide-react";
-import { JSX } from "react";
-import { AttendeeRatingProps } from "./AttendeeRating";
-import { SpeakerReviewProps } from "./SpeakerReview";
+import { lazy } from "react";
 
 export type SessionDetailsProps = {
   sessionId: string;
@@ -67,40 +65,14 @@ export function SessionDetails({
   );
 }
 
-let loadedAttendeeRating: (props: AttendeeRatingProps) => JSX.Element;
+const AttendeeRating = lazy(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const module = await import("./AttendeeRating");
+  return { default: module.AttendeeRating };
+});
 
-function AttendeeRating(props: AttendeeRatingProps) {
-  const { value: _AttendeeRating } = useAsync(async () => {
-    if (loadedAttendeeRating) return loadedAttendeeRating;
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const module = await import("./AttendeeRating");
-    loadedAttendeeRating = module.AttendeeRating;
-    return loadedAttendeeRating;
-  });
-
-  return _AttendeeRating ? (
-    <_AttendeeRating {...props} />
-  ) : (
-    "Loading feedback widget..."
-  );
-}
-
-let loadedSpeakerReview: (props: SpeakerReviewProps) => JSX.Element;
-
-function SpeakerReview(props: SpeakerReviewProps) {
-  const { value: _SpeakerReview } = useAsync(async () => {
-    if (loadedSpeakerReview) return loadedSpeakerReview;
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const module = await import("./SpeakerReview");
-    loadedSpeakerReview = module.SpeakerReview;
-    return loadedSpeakerReview;
-  });
-
-  return _SpeakerReview ? (
-    <_SpeakerReview {...props} />
-  ) : (
-    "Loading feedback widget..."
-  );
-}
+const SpeakerReview = lazy(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const module = await import("./SpeakerReview");
+  return { default: module.SpeakerReview };
+});
