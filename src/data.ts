@@ -138,7 +138,6 @@ export const getIsBookmarked = async (sessionId: string) => {
 };
 
 export const toggleBookmark = async (sessionId: string) => {
-  console.log(`toggle bookmark`, sessionId);
   await timeout();
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"

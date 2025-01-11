@@ -5,7 +5,7 @@ import { type ScheduleProps } from "./components/Schedule";
 import { type SessionDetailsProps } from "./components/SessionDetails";
 import { Toaster } from "./components/ui/toaster";
 import { getRole } from "./data";
-import { useAsync } from "./hooks/use-async";
+import { useAsyncData } from "./hooks/use-async";
 
 export type Route =
   | { route: "session"; sessionId: string }
@@ -44,7 +44,7 @@ function App() {
 let loadedSchedule: (props: ScheduleProps) => JSX.Element;
 
 function Schedule(props: ScheduleProps) {
-  const { value: _Schedule } = useAsync(async () => {
+  const { value: _Schedule } = useAsyncData(async () => {
     if (loadedSchedule) return loadedSchedule;
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -59,7 +59,7 @@ function Schedule(props: ScheduleProps) {
 let loadedSessionDetails: (props: SessionDetailsProps) => JSX.Element;
 
 function SessionDetails(props: SessionDetailsProps) {
-  const { value: _SessionDetails } = useAsync(async () => {
+  const { value: _SessionDetails } = useAsyncData(async () => {
     if (loadedSessionDetails) return loadedSessionDetails;
 
     await new Promise((resolve) => setTimeout(resolve, 1000));

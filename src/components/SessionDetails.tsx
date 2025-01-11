@@ -6,7 +6,7 @@ import {
   getSpeaker,
   toggleBookmark,
 } from "@/data";
-import { useAsync } from "@/hooks/use-async";
+import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 import { Bookmark } from "lucide-react";
 import { JSX } from "react";
 import { AttendeeRatingProps } from "./AttendeeRating";
@@ -23,14 +23,19 @@ export function SessionDetails({
   goBack,
   role,
 }: SessionDetailsProps) {
-  const { value: session } = useAsync(() => getSession(sessionId));
-  const { value: speaker } = useAsync(
+  const { value: session } = useAsyncData(() => getSession(sessionId));
+  const { value: speaker } = useAsyncData(
     async () => (session?.speakerId ? getSpeaker(session?.speakerId) : null),
     [session?.speakerId]
   );
-  const { value: isBookmarked, refetch: refetchBookmarked } = useAsync(() =>
-    getIsBookmarked(sessionId)
-  );
+  const {
+    value: isBookmarked,
+    status,
+    refetch,
+  } = useAsyncData(() => getIsBookmarked(sessionId));
+
+  const { status: toggleBookmarkStatus, execute: toggleBookmarkAction } =
+    useAsyncAction(() => toggleBookmark(sessionId).then(refetch));
 
   if (!session) return <div>Loading session details...</div>;
 
@@ -41,13 +46,18 @@ export function SessionDetails({
       </Button>
       <div className="flex justify-between items-start">
         <h2 className="text-2xl font-semibold">{session.title}</h2>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => toggleBookmark(session.id).then(refetchBookmarked)}
-        >
-          <Bookmark className={isBookmarked ? "fill-current" : ""} />
-        </Button>
+        {status === "pending" ? (
+          "Loading bookmark status..."
+        ) : (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleBookmarkAction}
+            disabled={toggleBookmarkStatus === "pending"}
+          >
+            <Bookmark className={isBookmarked ? "fill-current" : ""} />
+          </Button>
+        )}
       </div>
       <p className="text-sm text-gray-600 mb-4">{session.time}</p>
       <p>{session.description || "No description available."}</p>
@@ -79,7 +89,7 @@ export function SessionDetails({
 let loadedAttendeeRating: (props: AttendeeRatingProps) => JSX.Element;
 
 function AttendeeRating(props: AttendeeRatingProps) {
-  const { value: _AttendeeRating } = useAsync(async () => {
+  const { value: _AttendeeRating } = useAsyncData(async () => {
     if (loadedAttendeeRating) return loadedAttendeeRating;
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -98,7 +108,7 @@ function AttendeeRating(props: AttendeeRatingProps) {
 let loadedSpeakerReview: (props: SpeakerReviewProps) => JSX.Element;
 
 function SpeakerReview(props: SpeakerReviewProps) {
-  const { value: _SpeakerReview } = useAsync(async () => {
+  const { value: _SpeakerReview } = useAsyncData(async () => {
     if (loadedSpeakerReview) return loadedSpeakerReview;
 
     await new Promise((resolve) => setTimeout(resolve, 1000));

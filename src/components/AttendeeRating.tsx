@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ThumbsDown, Minus, ThumbsUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { getAttendeeFeedback, setAttendeeFeedback } from "@/data";
-import { useAsync } from "@/hooks/use-async";
+import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 
 type RatingOption = "negative" | "neutral" | "positive";
 
@@ -12,17 +12,19 @@ export function AttendeeRating({ sessionId }: AttendeeRatingProps) {
   const {
     value: selectedRating,
     refetch,
-    status,
-  } = useAsync(() => getAttendeeFeedback(sessionId));
+    status: loadStatus,
+  } = useAsyncData(() => getAttendeeFeedback(sessionId));
 
-  const handleRating = async (rating: RatingOption) => {
-    await setAttendeeFeedback(sessionId, rating);
-    refetch();
-    toast({
-      title: "Thank you for your feedback!",
-      description: "Your rating has been recorded.",
-    });
-  };
+  const { execute: handleRating, status: submitStatus } = useAsyncAction(
+    async (rating: RatingOption) => {
+      await setAttendeeFeedback(sessionId, rating);
+      refetch();
+      toast({
+        title: "Thank you for your feedback!",
+        description: "Your rating has been recorded.",
+      });
+    }
+  );
 
   return (
     <div className="space-y-2">
@@ -30,7 +32,7 @@ export function AttendeeRating({ sessionId }: AttendeeRatingProps) {
       <p className="text-sm text-gray-600">
         How would you rate this session overall?
       </p>
-      {status === "pending" ? (
+      {loadStatus === "pending" ? (
         <p>Loading feedback...</p>
       ) : (
         <div className="flex space-x-2">
@@ -38,6 +40,7 @@ export function AttendeeRating({ sessionId }: AttendeeRatingProps) {
             variant={selectedRating === "negative" ? "default" : "outline"}
             size="icon"
             onClick={() => handleRating("negative")}
+            disabled={submitStatus === "pending"}
           >
             <ThumbsDown className="h-4 w-4" />
           </Button>
@@ -45,6 +48,7 @@ export function AttendeeRating({ sessionId }: AttendeeRatingProps) {
             variant={selectedRating === "neutral" ? "default" : "outline"}
             size="icon"
             onClick={() => handleRating("neutral")}
+            disabled={submitStatus === "pending"}
           >
             <Minus className="h-4 w-4" />
           </Button>
@@ -52,6 +56,7 @@ export function AttendeeRating({ sessionId }: AttendeeRatingProps) {
             variant={selectedRating === "positive" ? "default" : "outline"}
             size="icon"
             onClick={() => handleRating("positive")}
+            disabled={submitStatus === "pending"}
           >
             <ThumbsUp className="h-4 w-4" />
           </Button>
