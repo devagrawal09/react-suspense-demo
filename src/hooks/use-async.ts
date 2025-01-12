@@ -1,4 +1,4 @@
-import { useState, use, useMemo } from "react";
+import { useState, use, useMemo, useTransition, startTransition } from "react";
 
 export function useAsyncData<T>(
   asyncFunction: () => Promise<T>,
@@ -7,6 +7,7 @@ export function useAsyncData<T>(
   const [fetching, setFetching] = useState(false);
   const value = use(useMemo(asyncFunction, [...deps, fetching]));
   const refetch = () => setFetching((f) => !f);
+  // const refetch = () => startTransition(() => setFetching((f) => !f));
   return { refetch, value };
 }
 
@@ -33,7 +34,7 @@ export function cache<T, A>(
     promise.then(() => {
       setTimeout(() => {
         globalCache.delete(localKey);
-      }, 1000);
+      }, 2000);
     });
     return promise;
   };
@@ -42,23 +43,17 @@ export function cache<T, A>(
 }
 
 export function useAsyncAction<P>(asyncFunction: (params: P) => Promise<void>) {
-  const [status, setStatus] = useState<
-    "idle" | "pending" | "success" | "error"
-  >("idle");
-  const [error, setError] = useState<Error | null>(null);
+  const [pending, startTransition] = useTransition();
 
   function execute(params: P) {
-    setStatus("pending");
-    setError(null);
-    return asyncFunction(params)
-      .then(() => {
-        setStatus("success");
-      })
-      .catch((error) => {
-        setError(error);
-        setStatus("error");
-      });
+    return asyncFunction(params);
   }
 
-  return { execute, status, error };
+  // function execute(params: P) {
+  //   return startTransition(() => asyncFunction(params));
+  // }
+
+  const status = pending ? "pending" : "idle";
+
+  return { execute, status };
 }

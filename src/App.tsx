@@ -3,7 +3,6 @@ import { Header } from "./components/Header";
 import { Login } from "./components/Login";
 import { Toaster } from "./components/ui/toaster";
 import { getRole } from "./data";
-import { useAsyncData } from "./hooks/use-async";
 
 export type Route =
   | { route: "session"; sessionId: string }

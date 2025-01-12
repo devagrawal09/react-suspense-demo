@@ -22,9 +22,7 @@ export function SessionDetails({
   role,
 }: SessionDetailsProps) {
   const { value: session } = useAsyncData(() => getSession(sessionId));
-  const { value: speaker } = useAsyncData(async () =>
-    getSpeaker(session.speakerId)
-  );
+  const { value: speaker } = useAsyncData(() => getSpeaker(session.speakerId));
   const { value: isBookmarked, refetch } = useAsyncData(() =>
     getIsBookmarked(sessionId)
   );
