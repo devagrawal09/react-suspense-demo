@@ -8,7 +8,7 @@ import {
 } from "@/data";
 import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 import { Bookmark } from "lucide-react";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 
 export type SessionDetailsProps = {
   sessionId: string;
@@ -56,6 +56,7 @@ export function SessionDetails({
 
       <Card className="mt-4 pt-4">
         <CardContent className="space-y-6">
+          {/* <Suspense fallback={<div>Loading feedback widget...</div>}> */}
           {role === "attendee" ? (
             <AttendeeRating sessionId={session.id} />
           ) : role === "speaker" ? (
@@ -63,6 +64,7 @@ export function SessionDetails({
           ) : (
             <>Login to provide feedback</>
           )}
+          {/* </Suspense> */}
         </CardContent>
       </Card>
     </>

@@ -4,7 +4,7 @@ const withDeviation = (seed: number) => {
   const deviation = Math.random() * 0.8 + 0.6;
   return Math.floor(seed * deviation);
 };
-const timeout = (ms = 300) =>
+const timeout = (ms = 500) =>
   new Promise((resolve) => setTimeout(resolve, withDeviation(ms)));
 
 export type Session = {
