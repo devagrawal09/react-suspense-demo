@@ -3,19 +3,24 @@ import { Header } from "./components/Header";
 import { Login } from "./components/Login";
 import { Toaster } from "./components/ui/toaster";
 import { getRole } from "./data";
+import { PhraseCounterWrapper } from "./components/SolidComparison";
 
 export type Route =
   | { route: "session"; sessionId: string }
   | { route: "home" }
-  | { route: "login" };
+  | { route: "login" }
+  | { route: "comparison" };
 
 function App() {
-  const [currentRoute, setRoute] = useState<Route>({ route: "home" });
+  const [currentRoute, setRoute] = useState<Route>({ route: "comparison" });
   const [navigating, start] = useTransition();
   // const setRoute = (route: Route) => start(() => _setRoute(route));
 
   const [role, setRole] = useState(getRole);
   useEffect(() => setRole(role), [role]);
+  if (currentRoute.route === "comparison") {
+    return <PhraseCounterWrapper />;
+  }
 
   return (
     <>
