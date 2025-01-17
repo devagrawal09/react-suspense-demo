@@ -5,9 +5,12 @@ export function useAsyncData<T>(
   deps: any[] = []
 ) {
   const [fetching, setFetching] = useState(false);
-  const value = use(useMemo(asyncFunction, [...deps, fetching]));
+  const promise = useMemo(asyncFunction, [...deps, fetching]);
+  const value = use(promise);
   const refetch = () => setFetching((f) => !f);
+
   // const refetch = () => startTransition(() => setFetching((f) => !f));
+
   return { refetch, value };
 }
 
@@ -43,10 +46,12 @@ export function cache<T, A>(
 }
 
 export function useAsyncAction<P>(asyncFunction: (params: P) => Promise<void>) {
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
+  // const [pending, startTransition] = useTransition();
 
   function execute(params: P) {
-    return asyncFunction(params);
+    setPending(true);
+    return asyncFunction(params).then(() => setPending(false));
   }
 
   // function execute(params: P) {
