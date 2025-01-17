@@ -1,8 +1,10 @@
+import { cache } from "./hooks/use-async";
+
 const withDeviation = (seed: number) => {
   const deviation = Math.random() * 0.8 + 0.6;
   return Math.floor(seed * deviation);
 };
-const timeout = (ms = 1000) =>
+const timeout = (ms = 500) =>
   new Promise((resolve) => setTimeout(resolve, withDeviation(ms)));
 
 export type Session = {
@@ -103,39 +105,39 @@ const speakers: Speaker[] = [
   },
 ];
 
-export const getSchedule = async (day: string) => {
+export const getSchedule = cache(async (day: string) => {
   await timeout();
   return schedule[day];
-};
+});
 
-export const getSession = async (sessionId: string) => {
+export const getSession = cache(async (sessionId: string) => {
   await timeout();
   const session = Object.values(schedule)
     .flat()
     .find((s) => s.id === sessionId);
   if (!session) throw new Error(`Session not found: ${sessionId}`);
   return session;
-};
+});
 
-export const getSpeaker = async (speakerId: string) => {
+export const getSpeaker = cache(async (speakerId: string) => {
   await timeout();
   const speaker = speakers.find((s) => s.id === speakerId);
   if (!speaker) throw new Error(`Speaker not found: ${speakerId}`);
   return speaker;
-};
+});
 
-export const getSpeakers = async () => {
-  await timeout(800);
+export const getSpeakers = cache(async () => {
+  await timeout();
   return speakers;
-};
+});
 
-export const getIsBookmarked = async (sessionId: string) => {
+export const getIsBookmarked = cache(async (sessionId: string) => {
   await timeout();
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
   );
   return bookmarks.includes(sessionId);
-};
+});
 
 export const toggleBookmark = async (sessionId: string) => {
   await timeout();
@@ -153,13 +155,14 @@ export const toggleBookmark = async (sessionId: string) => {
 };
 
 export type AttendeeFeedback = "negative" | "neutral" | "positive";
-export const getAttendeeFeedback = async (sessionId: string) => {
+
+export const getAttendeeFeedback = cache(async (sessionId: string) => {
   await timeout();
   const feedback: Record<string, AttendeeFeedback> = JSON.parse(
     localStorage.getItem("attendee-feedback") || "{}"
   );
   return feedback[sessionId];
-};
+});
 
 export const setAttendeeFeedback = async (
   sessionId: string,
@@ -173,13 +176,13 @@ export const setAttendeeFeedback = async (
   localStorage.setItem("attendee-feedback", JSON.stringify(currentFeedback));
 };
 
-export const getSpeakerFeedback = async (sessionId: string) => {
+export const getSpeakerFeedback = cache(async (sessionId: string) => {
   await timeout();
   const feedback: Record<string, string> = JSON.parse(
     localStorage.getItem("speaker-feedback") || "{}"
   );
   return feedback[sessionId] || "";
-};
+});
 
 export const setSpeakerFeedback = async (
   sessionId: string,

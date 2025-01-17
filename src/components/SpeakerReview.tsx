@@ -6,11 +6,9 @@ import { useAsyncAction, useAsyncData } from "@/hooks/use-async";
 
 export type SpeakerReviewProps = { sessionId: string };
 export function SpeakerReview({ sessionId }: SpeakerReviewProps) {
-  const {
-    value: review,
-    refetch,
-    status: loadStatus,
-  } = useAsyncData(() => getSpeakerFeedback(sessionId));
+  const { value: review, refetch } = useAsyncData(() =>
+    getSpeakerFeedback(sessionId)
+  );
 
   const { execute: handleSubmit, status: submitStatus } = useAsyncAction(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,17 +30,13 @@ export function SpeakerReview({ sessionId }: SpeakerReviewProps) {
       <p className="text-sm text-gray-600">
         Please provide your detailed review of this session.
       </p>
-      {loadStatus === "pending" ? (
-        <p>Loading review...</p>
-      ) : (
-        <Textarea
-          placeholder="Please provide your detailed review of this session..."
-          rows={5}
-          name="review"
-          defaultValue={review || ""}
-          disabled={submitStatus === "pending"}
-        />
-      )}
+      <Textarea
+        placeholder="Please provide your detailed review of this session..."
+        rows={5}
+        name="review"
+        defaultValue={review || ""}
+        disabled={submitStatus === "pending"}
+      />
       <Button type="submit" disabled={submitStatus === "pending"}>
         Submit Review
       </Button>
