@@ -11,8 +11,8 @@ export type ScheduleProps = {
 
 export function Schedule({ setRoute }: ScheduleProps) {
   const [activeTab, setActiveTab] = useState("day1");
-  const [navigating, start] = useTransition();
-  // const setActiveTab = (tab: string) => start(() => _setActiveTab(tab));
+  const [navigating, startTransition] = useTransition();
+  // const setActiveTab = (tab: string) => startTransition(() => _setActiveTab(tab));
 
   return (
     <>

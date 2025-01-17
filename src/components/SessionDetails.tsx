@@ -23,12 +23,12 @@ export function SessionDetails({
 }: SessionDetailsProps) {
   const { value: session } = useAsyncData(() => getSession(sessionId));
   const { value: speaker } = useAsyncData(() => getSpeaker(session.speakerId));
-  const { value: isBookmarked, refetch } = useAsyncData(() =>
+  const { value: isBookmarked, refetch: refetchBookmarked } = useAsyncData(() =>
     getIsBookmarked(sessionId)
   );
 
   const { status: toggleBookmarkStatus, execute: toggleBookmarkAction } =
-    useAsyncAction(() => toggleBookmark(sessionId).then(refetch));
+    useAsyncAction(() => toggleBookmark(sessionId).then(refetchBookmarked));
 
   return (
     <>
