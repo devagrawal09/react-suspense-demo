@@ -28,13 +28,13 @@ function PhraseCounter() {
         Clicks: {count}
       </button>
       <Suspense fallback={<p className="p">Loading phrase...</p>}>
-        <Message text={phrasePromise} />
+        <Message textPromise={phrasePromise} />
       </Suspense>
     </main>
   );
 }
 
-function Message({ text: textPromise }: { text: Promise<string> }) {
+function Message({ textPromise }: { textPromise: Promise<string> }) {
   console.log(`Rendering <Message>`);
   const text = use(textPromise);
   return <p className="p">The message is: {text}</p>;
@@ -61,6 +61,6 @@ const getPhrase = cache(async (num: number) => {
 
 const getHello = cache(async () => {
   console.log("Fetching helloo...");
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 500));
   return "Hello world!";
 });

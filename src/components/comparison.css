@@ -1,14 +1,14 @@
-a {
+.comparison a {
   margin-right: 1rem;
 }
 
-main {
+.comparison main {
   text-align: center;
   padding: 1em;
   margin: 0 auto;
 }
 
-.h1 {
+.comparison .h1 {
   color: #335d92;
   text-transform: uppercase;
   font-size: 4rem;
@@ -18,23 +18,23 @@ main {
   max-width: 14rem;
 }
 
-.p {
+.comparison .p {
   max-width: 14rem;
   margin: 2rem auto;
   line-height: 1.35;
 }
 
 @media (min-width: 480px) {
-  h1 {
+  .comparison h1 {
     max-width: none;
   }
 
-  p {
+  .comparison p {
     max-width: none;
   }
 }
 
-.increment {
+.comparison .increment {
   font-family: inherit;
   font-size: inherit;
   padding: 1em 2em;
@@ -48,10 +48,10 @@ main {
   cursor: pointer;
 }
 
-.increment:focus {
+.comparison .increment:focus {
   border: 2px solid #335d92;
 }
 
-.increment:active {
+.comparison .increment:active {
   background-color: rgba(68, 107, 158, 0.2);
 }
