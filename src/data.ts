@@ -2,7 +2,7 @@ const withDeviation = (seed: number) => {
   const deviation = Math.random() * 0.8 + 0.6;
   return Math.floor(seed * deviation);
 };
-const timeout = (ms = 1000) =>
+const timeout = (ms = 2000) =>
   new Promise((resolve) => setTimeout(resolve, withDeviation(ms)));
 
 export type Session = {
@@ -125,7 +125,7 @@ export const getSpeaker = async (speakerId: string) => {
 };
 
 export const getSpeakers = async () => {
-  await timeout(800);
+  await timeout(2000);
   return speakers;
 };
 

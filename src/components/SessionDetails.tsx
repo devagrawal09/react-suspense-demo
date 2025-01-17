@@ -31,11 +31,11 @@ export function SessionDetails({
   const {
     value: isBookmarked,
     status: bookmarkStatus,
-    refetch,
+    refetch: refetchBookmarked,
   } = useAsyncData(() => getIsBookmarked(sessionId));
 
   const { status: toggleBookmarkStatus, execute: toggleBookmarkAction } =
-    useAsyncAction(() => toggleBookmark(sessionId).then(refetch));
+    useAsyncAction(() => toggleBookmark(sessionId).then(refetchBookmarked));
 
   if (!session) return <div>Loading session details...</div>;
 
