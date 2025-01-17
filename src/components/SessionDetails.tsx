@@ -25,12 +25,12 @@ export function SessionDetails({
 }: SessionDetailsProps) {
   const { value: session } = useAsyncData(() => getSession(sessionId));
   const { value: speaker } = useAsyncData(
-    async () => (session?.speakerId ? getSpeaker(session?.speakerId) : null),
+    async () => (session?.speakerId ? getSpeaker(session.speakerId) : null),
     [session?.speakerId]
   );
   const {
     value: isBookmarked,
-    status,
+    status: bookmarkStatus,
     refetch,
   } = useAsyncData(() => getIsBookmarked(sessionId));
 
@@ -46,7 +46,7 @@ export function SessionDetails({
       </Button>
       <div className="flex justify-between items-start">
         <h2 className="text-2xl font-semibold">{session.title}</h2>
-        {status === "pending" ? (
+        {bookmarkStatus === "pending" ? (
           "Loading bookmark status..."
         ) : (
           <Button

@@ -130,7 +130,7 @@ export const getSpeakers = async () => {
 };
 
 export const getIsBookmarked = async (sessionId: string) => {
-  await timeout();
+  await timeout(2000);
   const bookmarks: string[] = JSON.parse(
     localStorage.getItem("bookmarks") || "[]"
   );
