@@ -18,7 +18,7 @@ function PhraseCounter() {
   const phrasePromise = useMemo(() => getPhrase(count), [count]);
 
   return (
-    <main>
+    <main className="comparison">
       <h1 className="h1">{hello}</h1>
       <button
         className="increment"
