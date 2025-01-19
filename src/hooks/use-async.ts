@@ -1,4 +1,4 @@
-import { useState, use, useMemo, useTransition, startTransition } from "react";
+import { useState, use, useMemo, startTransition } from "react";
 
 export function useAsyncData<T>(
   asyncFunction: () => Promise<T>,
